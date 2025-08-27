@@ -8,6 +8,7 @@ import 'package:frontend/features/home/cubit/tasks_cubit.dart';
 import 'package:frontend/features/home/pages/add_new_task_page.dart';
 import 'package:frontend/features/home/widgets/date_selector.dart';
 import 'package:frontend/features/home/widgets/task_card.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   static MaterialPageRoute route() =>
@@ -19,6 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DateTime selectedDate = DateTime.now();
   @override
   void initState() {
     super.initState();
@@ -50,11 +52,26 @@ class _HomePageState extends State<HomePage> {
           }
 
           if (state is GetTasksSuccess) {
-            final tasks = state.tasks;
+            final tasks = state.tasks.where((elem) {
+              final dueDate = DateTime.parse(
+                elem.dueAt,
+              ); // convert String → DateTime
+
+              return DateFormat('d').format(dueDate) ==
+                      DateFormat('d').format(selectedDate) &&
+                  selectedDate.month == dueDate.month &&
+                  selectedDate.year == dueDate.year;
+            }).toList();
+
             return Column(
               children: [
                 //date selector
-                DateSelector(),
+                DateSelector(selectedDate: selectedDate,
+                onTap: (date){
+                  setState(() {
+                    selectedDate = date;
+                  });
+                },),
                 Expanded(
                   child: ListView.builder(
                     itemCount: tasks.length,
@@ -80,7 +97,9 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
-                              task.dueAt,
+                              DateFormat.jm().format(
+                                DateTime.parse(task.dueAt),
+                              ),
                               style: TextStyle(fontSize: 17),
                             ),
                           ),

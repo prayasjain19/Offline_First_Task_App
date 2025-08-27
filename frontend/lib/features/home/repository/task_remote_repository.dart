@@ -48,7 +48,8 @@ class TaskRemoteRepository {
       List<TaskModel> taskList = [];
 
       for (var ele in listOfTasks) {
-        taskList.add(TaskModel.fromJson(ele));
+        print(ele);
+        taskList.add(TaskModel.fromMap(ele));
       }
 
       return taskList;
