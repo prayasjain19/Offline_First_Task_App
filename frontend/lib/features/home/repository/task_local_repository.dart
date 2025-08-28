@@ -14,18 +14,14 @@ class TaskLocalRepository {
     _database = await _initDb();
     return _database!;
   }
-
+  //Task Init Db
   Future<Database> _initDb() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, "tasks.db");
     return openDatabase(
       path,
-      version: 4,
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < newVersion) {
-          await db.execute('ALTER TABLE $tableName ADD COLUMN color TEXT NOT NULL',);
-        }
-      },
+      version: 2,
+      
       onCreate: (db, version) {
         return db.execute('''
           CREATE TABLE $tableName(
