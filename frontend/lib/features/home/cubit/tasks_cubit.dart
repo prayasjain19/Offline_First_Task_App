@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/core/constants/utils.dart';
+import 'package:frontend/features/home/repository/task_local_repository.dart';
 import 'package:frontend/features/home/repository/task_remote_repository.dart';
 import 'package:frontend/models/task_model.dart';
 part 'tasks_state.dart';
@@ -9,6 +10,7 @@ class TasksCubit extends Cubit<TasksState> {
   TasksCubit() : super(TasksInitial());
 
   final taskRemoteRepository = TaskRemoteRepository();
+  final taskLocalRepository = TaskLocalRepository();
 
   Future<void> createNewTask({
     required String title,
@@ -26,6 +28,7 @@ class TasksCubit extends Cubit<TasksState> {
         token: token,
         dueAt: dueAt,
       );
+      await taskLocalRepository.inserTask(taskModel);
 
       //if created than emit success
       emit(AddNewTaskSuccess(taskModel));
@@ -33,16 +36,13 @@ class TasksCubit extends Cubit<TasksState> {
       emit(TasksError(e.toString()));
     }
   }
-  Future<void> getAllTasks({
-    required String token,
-  }) async {
+
+  Future<void> getAllTasks({required String token}) async {
     try {
       emit(TasksLoading());
 
       //get All task Created By User
-      final tasks = await taskRemoteRepository.getTasks(
-        token: token,
-      );
+      final tasks = await taskRemoteRepository.getTasks(token: token);
 
       //if created than emit success
       emit(GetTasksSuccess(tasks));

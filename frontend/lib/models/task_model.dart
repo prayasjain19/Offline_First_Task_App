@@ -68,7 +68,7 @@ class TaskModel {
       createdAt: map['createdAt'] ?? '',
       updatedAt: map['updatedAt'] ?? '',
       dueAt: map['dueAt'] ?? '',
-      color: hexToRgb(map['hexColor']),
+      color: hexToRgb(map['color']),
     );
   }
 

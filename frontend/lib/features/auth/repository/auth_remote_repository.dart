@@ -85,6 +85,7 @@ class AuthRepository {
     } catch (e) {
       //Handle offline cas eif user offline we comes to catch block because of http
       final user = await authLocalRepository.getUser();
+      print(user);
       return user;
     }
   }

@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:frontend/core/constants/constants.dart';
+import 'package:frontend/features/home/repository/task_local_repository.dart';
 import 'package:frontend/models/task_model.dart';
 import 'package:http/http.dart' as http;
 
 class TaskRemoteRepository {
+  final taskLocalRepository = TaskLocalRepository();
   Future<TaskModel> createTask({
     required String title,
     required String description,
@@ -52,8 +54,14 @@ class TaskRemoteRepository {
         taskList.add(TaskModel.fromMap(ele));
       }
 
+      await taskLocalRepository.insertTasks(taskList);
+
       return taskList;
     } catch (e) {
+      final tasks = await taskLocalRepository.getTasks();
+      if (tasks.isNotEmpty) {
+        return tasks;
+      }
       rethrow;
     }
   }
