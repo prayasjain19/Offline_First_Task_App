@@ -58,8 +58,10 @@ class TaskRemoteRepository {
 
       return taskList;
     } catch (e) {
+      //Store in offline
       final tasks = await taskLocalRepository.getTasks();
       if (tasks.isNotEmpty) {
+        print(tasks);
         return tasks;
       }
       rethrow;
